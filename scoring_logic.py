@@ -94,6 +94,6 @@ def run_scoring_pipeline(leads, offer):
             "reasoning": ai_result["reasoning"]
         })
         
-        time.sleep(1) 
+        time.sleep(5) 
         
     return scored_results
