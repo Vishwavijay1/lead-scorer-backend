@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -69,6 +69,27 @@ def get_results():
         return jsonify({"message": "No results available. Run scoring via POST /score first."}), 404
         
     return jsonify(results_data), 200
+
+
+@app.route('/results/export', methods=['GET'])
+def export_results():
+    if not results_data:
+        return jsonify({"message": "No results available to export."}), 404
+        
+    try:
+        df = pd.DataFrame(results_data)
+        
+        csv_data = df.to_csv(index=False)
+        
+        return Response(
+            csv_data,
+            mimetype="text/csv",
+            headers={"Content-disposition":
+                     "attachment; filename=scored_leads.csv"})
+    except Exception as e:
+        return jsonify({"error": f"Failed to export CSV: {e}"}), 500
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001, use_reloader=False)
