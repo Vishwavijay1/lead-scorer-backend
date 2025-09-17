@@ -1,9 +1,9 @@
 import pandas as pd
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
-from scoring_logic import run_scoring_pipeline
 
 load_dotenv()
+from scoring_logic import run_scoring_pipeline
 
 app = Flask(__name__)
 
