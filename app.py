@@ -1,30 +1,23 @@
-# app.py
-
 import pandas as pd
 from flask import Flask, request, jsonify
+from dotenv import load_dotenv
+from scoring_logic import run_scoring_pipeline
+
+load_dotenv()
 
 app = Flask(__name__)
 
 offer_data = {}
 leads_data = []
-
-@app.route('/', methods=['GET'])
-def home():
-    """A simple endpoint to check if the server is running."""
-    return jsonify({"status": "Server is running"}), 200
-
+results_data = []
 
 @app.route('/offer', methods=['POST'])
 def set_offer():
-    """
-    Accepts JSON with product/offer details and stores it.
-    """
     global offer_data
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
     
     data = request.get_json()
-    # Basic validation
     if 'name' not in data or 'value_props' not in data or 'ideal_use_cases' not in data:
         return jsonify({"error": "Missing required fields in offer data"}), 400
         
@@ -33,9 +26,6 @@ def set_offer():
 
 @app.route('/leads/upload', methods=['POST'])
 def upload_leads():
-    """
-    Accepts a CSV file of leads and stores them.
-    """
     global leads_data
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
@@ -57,6 +47,28 @@ def upload_leads():
     
     return jsonify({"error": "Invalid file type, please upload a CSV"}), 400
 
+@app.route('/score', methods=['POST'])
+def score_leads():
+    global results_data
+    if not offer_data:
+        return jsonify({"error": "Offer data not set. Please POST to /offer first."}), 400
+    if not leads_data:
+        return jsonify({"error": "Leads not uploaded. Please POST to /leads/upload first."}), 400
+        
+    try:
+        results_data = run_scoring_pipeline(leads_data, offer_data)
+        return jsonify({
+            "message": "Scoring complete. GET /results to see the output."
+        }), 200
+    except Exception as e:
+        return jsonify({"error": f"An error occurred during scoring: {e}"}), 500
+
+@app.route('/results', methods=['GET'])
+def get_results():
+    if not results_data:
+        return jsonify({"message": "No results available. Run scoring via POST /score first."}), 404
+        
+    return jsonify(results_data), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5001, use_reloader=False)
