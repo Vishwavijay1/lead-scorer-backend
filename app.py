@@ -10,17 +10,21 @@ leads_data = []
 
 @app.route('/', methods=['GET'])
 def home():
+    """A simple endpoint to check if the server is running."""
     return jsonify({"status": "Server is running"}), 200
 
 
 @app.route('/offer', methods=['POST'])
 def set_offer():
-    
+    """
+    Accepts JSON with product/offer details and stores it.
+    """
     global offer_data
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
     
     data = request.get_json()
+    # Basic validation
     if 'name' not in data or 'value_props' not in data or 'ideal_use_cases' not in data:
         return jsonify({"error": "Missing required fields in offer data"}), 400
         
@@ -29,7 +33,9 @@ def set_offer():
 
 @app.route('/leads/upload', methods=['POST'])
 def upload_leads():
- 
+    """
+    Accepts a CSV file of leads and stores them.
+    """
     global leads_data
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
