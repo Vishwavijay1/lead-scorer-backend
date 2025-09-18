@@ -20,4 +20,4 @@ EXPOSE 8000
 ENV GOOGLE_API_KEY=""
 
 # Run the app when the container launches
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--timeout", "600", "app:app"]
