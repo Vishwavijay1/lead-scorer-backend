@@ -2,7 +2,7 @@
 
 This backend service accepts product information and a list of sales leads, then scores each lead's buying intent on a scale of 0-100. It uses a hybrid approach, combining a deterministic rule-based layer for objective data points and an AI-powered layer using Google Gemini for nuanced, contextual analysis.
 
-**Live API Base URL:** `[Paste Your Render URL Here]`
+**Live API Base URL:** `https://lead-scorer-backend.onrender.com`
 
 ---
 ## Tech Stack
@@ -17,7 +17,7 @@ This backend service accepts product information and a list of sales leads, then
 
 1.  **Clone the repository:**
     ```bash
-    git clone [your-repo-url]
+    git clone [https://github.com/Vishwavijay1/lead-scorer-backend]
     cd lead-scorer-backend
     ```
 
