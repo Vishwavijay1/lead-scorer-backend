@@ -5,12 +5,14 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from scoring_logic import calculate_rule_score
-
+#importing the function to be tested
 
 mock_offer = {
     "ideal_use_cases": ["B2B SaaS", "Enterprise Software"]
-}
+}# mock offer data for testing
 
+
+#5 leads for testing csv file
 def test_decision_maker_role():
     lead = {"role": "VP of Sales", "industry": "B2B SaaS", "name": "test", "company": "test", "location": "test", "linkedin_bio": "test"}
     assert calculate_rule_score(lead, mock_offer) == 50 # 20 (role) + 20 (industry) + 10 (complete)

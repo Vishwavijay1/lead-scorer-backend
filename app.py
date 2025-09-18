@@ -7,10 +7,12 @@ from scoring_logic import run_scoring_pipeline
 
 app = Flask(__name__)
 
+#local data to work in order to optimise storage
 offer_data = {}
 leads_data = []
 results_data = []
 
+#initial end point to give in offers
 @app.route('/offer', methods=['POST'])
 def set_offer():
     global offer_data
@@ -24,6 +26,8 @@ def set_offer():
     offer_data = data
     return jsonify({"message": "Offer data received successfully", "offer": offer_data}), 201
 
+
+#to upload the leads as csv file
 @app.route('/leads/upload', methods=['POST'])
 def upload_leads():
     global leads_data
@@ -47,6 +51,8 @@ def upload_leads():
     
     return jsonify({"error": "Invalid file type, please upload a CSV"}), 400
 
+
+#to get the score from the scoring_logic.py file 
 @app.route('/score', methods=['POST'])
 def score_leads():
     global results_data
@@ -63,6 +69,8 @@ def score_leads():
     except Exception as e:
         return jsonify({"error": f"An error occurred during scoring: {e}"}), 500
 
+
+#to show the results in json format
 @app.route('/results', methods=['GET'])
 def get_results():
     if not results_data:
@@ -71,11 +79,13 @@ def get_results():
     return jsonify(results_data), 200
 
 
+#to export the results in csv format
 @app.route('/results/export', methods=['GET'])
 def export_results():
     if not results_data:
         return jsonify({"message": "No results available to export."}), 404
-        
+
+    #try return if the data is not cleaned or is tampered   
     try:
         df = pd.DataFrame(results_data)
         

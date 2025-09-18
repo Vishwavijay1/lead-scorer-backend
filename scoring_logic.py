@@ -5,7 +5,10 @@ import time
 import google.generativeai as genai
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+#getting the api key from the environment variable
 
+
+# Function to calculate the rule-based score for a lead
 def calculate_rule_score(lead, offer):
     score = 0
     role = lead.get('role', '')
@@ -29,6 +32,9 @@ def calculate_rule_score(lead, offer):
         
     return score
 
+
+#calculating the ai based score and getting the output in JSON file
+#getting direct json output from the AI model because parsing text is unreliable
 def get_ai_score_and_reasoning(lead, offer):
     model = genai.GenerativeModel('gemini-1.5-flash')
     
@@ -50,7 +56,7 @@ def get_ai_score_and_reasoning(lead, offer):
       "reasoning": "A one-sentence explanation for the classification."
     }}
     """
-
+    #try catch if the ai returns faulty json to prevent crash
     try:
         generation_config = genai.types.GenerationConfig(response_mime_type="application/json")
         response = model.generate_content(prompt, generation_config=generation_config)
@@ -76,6 +82,8 @@ def get_ai_score_and_reasoning(lead, offer):
             "reasoning": "An error occurred during AI analysis."
         }
 
+
+#pipeline to calculate the final score ant to prepare report JSON file
 def run_scoring_pipeline(leads, offer):
     scored_results = []
     
@@ -94,6 +102,6 @@ def run_scoring_pipeline(leads, offer):
             "reasoning": ai_result["reasoning"]
         })
         
-        time.sleep(5) 
+        time.sleep(5) #adding delay to work with the free tier of the gemini api
         
     return scored_results
